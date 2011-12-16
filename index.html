@@ -16,8 +16,8 @@
     socket = io.connect('/');
 
     socket.on('update', function (data) {
-      $('tr[socket_id=' + data.id + ']').find('.name').text(data.name);
-      $('tr[socket_id=' + data.id + ']').find('.text').text(data.text);
+      $('tr[socket_id=' + data.id + ']').find('.name').html(data.name);
+      $('tr[socket_id=' + data.id + ']').find('.text').html(data.text);
     });
 
     socket.on('new', function(data) {
@@ -31,19 +31,22 @@
   </script>
 
   <style>
-  table, input { width: 100%; }
-  .text { width: 100%; }
+  table, input, textarea, .text { width: 100%; }
+  textarea {
+    font-family: monospace;
+    height: 300px;
+  }
   </style>
 </head>
 <body>
   <table border=1 cellpadding=5 cellspacing=0>
-    <div id="input">
-      <p>
-        <input type="text" id="name" value="name" />
-        <br />
-        <input type="text" id="text" value="edit me!" />
-      </p>
-    </div>
   </table>
+  <div id="input">
+    <p>
+      <input type="text" id="name" value="name" />
+      <br />
+      <textarea id="text">edit me!</textarea>
+    </p>
+  </div>
 </body>
 </html>

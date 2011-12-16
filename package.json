@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "express": "2.5.2",
-    "socket.io": "0.8.7"
+    "socket.io": "0.8.7",
+    "markdown": "0.3.1"
   }
 }

@@ -1,5 +1,6 @@
-var app = require('express').createServer(),
-     io = require('socket.io').listen(app);
+var app      = require('express').createServer(),
+    io       = require('socket.io').listen(app),
+    markdown = require('markdown').markdown.toHTML;
 
 var port = process.env.PORT || 3000;
 
@@ -34,6 +35,8 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('update', function (data) {
     data.id = socket.id;
+    data.text = markdown(data.text);
+
     io.sockets.emit('update', data);
 
     socks[find_sock(socket.id)] = data;
