@@ -1,35 +1,45 @@
 <html>
 <head>
   <title>insert title</title>
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
   $(function() {
+    function callback() {
+      socket.emit("update", { name: $('#name').val(),
+                              text: $('#text').val() });
+    }
+
+    $('#name').keyup(callback);
+    $('#text').keyup(callback);
+
     socket = io.connect('/');
 
     socket.on('update', function (data) {
-      $('td[socket_id=' + data.id + ']').text(data.text);
+      $('tr[socket_id=' + data.id + ']').find('.name').text(data.name);
+      $('tr[socket_id=' + data.id + ']').find('.text').text(data.text);
     });
 
     socket.on('new', function(data) {
-      $('table').append("<tr><td socket_id=" + data.id + "></td></tr>")
+      $('table').append("<tr socket_id=" + data.id + "><td class=name></td><td class=text></td></tr>")
     });
 
     socket.on('remove', function(data) {
-      $('td[socket_id=' + data.id + ']').remove();
+      $('tr[socket_id=' + data.id + ']').remove();
     });
   });
-
-  function send() {
-    socket.emit("update", { text: $('#text').val() });
-  };
   </script>
+
   <style>
   table, input { width: 100%; }
   </style>
 </head>
 <body>
-  <p><input type="text" id="text" onkeyup="send()" /></p>
-  <table border=1 cellpadding=5 cellspacing=0></table>
+  <table border=1 cellpadding=5 cellspacing=0>
+    <tr id="input">
+      <td><input type="text" id="name" value="name" /></td>
+      <td><input type="text" id="text" value="edit me!" /></td>
+    </tr>
+  </table>
 </body>
 </html>

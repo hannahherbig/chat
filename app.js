@@ -2,29 +2,40 @@ var app = require('express').createServer(),
      io = require('socket.io').listen(app);
 
 var port = process.env.PORT || 3000;
-app.listen(port, function() { console.log("Listening on " + port); });
+
+socks = [];
 
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
-socks = {};
+app.listen(port, function() { console.log("Listening on " + port); });
 
 io.sockets.on('connection', function (socket) {
-  for (var i in socks) {
-    socket.emit('new',    { id: i });
-    socket.emit('update', { id: i, text: socks[i] });
+  function find_sock(id) {
+    for(i in socks)
+      if (socks[i].id == id)
+        return i;
   }
 
+  for (var i in socks) {
+    socket.emit('new',    socks[i]);
+    socket.emit('update', socks[i]);
+  };
+
   io.sockets.emit('new', { id: socket.id });
-  socks[socket.id] = "";
+  socks.push({ id: socket.id });
 
   socket.on('disconnect', function () {
     io.sockets.emit('remove', { id: socket.id });
+
+    socks.splice(find_sock(socket.id), 1)
   });
 
   socket.on('update', function (data) {
-    io.sockets.emit('update', { id: socket.id, text: data.text });
-    socks[socket.id] = data.text;
+    data.id = socket.id;
+    io.sockets.emit('update', data);
+
+    socks[find_sock(socket.id)] = data;
   });
 });
