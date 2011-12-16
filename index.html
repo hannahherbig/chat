@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>insert title</title>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+  $(function() {
+    socket = io.connect('http://localhost');
+
+    socket.on('update', function (data) {
+      $('td[socket_id=' + data.id + ']').text(data.text);
+    });
+
+    socket.on('new', function(data) {
+      $('table').append("<tr><td socket_id=" + data.id + "></td></tr>")
+    });
+
+    socket.on('remove', function(data) {
+      $('td[socket_id=' + data.id + ']').remove();
+    });
+  });
+
+  function send() {
+    socket.emit("update", { text: $('#text').val() });
+  };
+  </script>
+  <style>
+  table, input { width: 100%; }
+  </style>
+</head>
+<body>
+  <p><input type="text" id="text" onkeyup="send()" /></p>
+  <table border=1 cellpadding=5 cellspacing=0></table>
+</body>
+</html>
