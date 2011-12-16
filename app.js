@@ -4,6 +4,12 @@ var app      = require('express').createServer(),
 
 var port = process.env.PORT || 3000;
 
+Array.prototype.remove = function(from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
+
 socks = [];
 
 app.get('/', function (req, res) {
@@ -24,21 +30,30 @@ io.sockets.on('connection', function (socket) {
     socket.emit('update', socks[i]);
   };
 
+  console.log({ connect: socket.id });
   io.sockets.emit('new', { id: socket.id });
   socks.push({ id: socket.id });
 
   socket.on('disconnect', function () {
+    console.log({ disconnect: socket.id });
     io.sockets.emit('remove', { id: socket.id });
 
-    socks.splice(find_sock(socket.id), 1);
+    socks.remove(find_sock(socket.id));
+
+    console.log(socks);
   });
 
   socket.on('update', function (data) {
+    console.log({ update: data });
     data.id = socket.id;
     data.text = markdown(data.text);
 
     io.sockets.emit('update', data);
 
     socks[find_sock(socket.id)] = data;
+
+    console.log(socks);
   });
+
+  console.log(socks);
 });

@@ -16,15 +16,18 @@
     socket = io.connect('/');
 
     socket.on('update', function (data) {
-      $('tr[socket_id=' + data.id + ']').find('.name').html(data.name);
-      $('tr[socket_id=' + data.id + ']').find('.text').html(data.text);
+      if (data.id != undefined) {
+        $('tr[socket_id=' + data.id + ']').find('.name').html(data.name);
+        $('tr[socket_id=' + data.id + ']').find('.text').html(data.text);
+      };
     });
 
-    socket.on('new', function(data) {
-      $('table').append("<tr socket_id=" + data.id + "><th class=name></th><td class=text></td></tr>")
+    socket.on('new', function (data) {
+      if (data.id != undefined)
+        $('table').append("<tr socket_id=" + data.id + "><th class=name></th><td class=text></td></tr>");
     });
 
-    socket.on('remove', function(data) {
+    socket.on('remove', function (data) {
       $('tr[socket_id=' + data.id + ']').remove();
     });
   });
@@ -36,6 +39,28 @@
     font-family: monospace;
     height: 300px;
   }
+
+  .text { max-width: 100%; overflow: auto; }
+  .text p, .text h1 { margin: 5px 0 }
+  .text > * { margin-bottom: 0px }
+  .text strong { font-weight:bold; }
+  .text em { font-style:italic; }
+  .text strong em { font-style:italic; font-weight: bold }
+  .text img { display:none }
+  .text ol, .text ul { margin:10px 2em; }
+  .text ul { list-style: disc outside; }
+  .text ol { list-style: decimal outside; }
+  .text pre { margin:10px; }
+  .text blockquote, .help blockquote {
+    border-left: 2px solid #369;
+    padding-left: 4px;
+    margin: 5px;
+    margin-right: 15px;
+  }
+  .text td, .text th { border:1px solid #EEE; padding: 1px 3px; }
+  .text th { font-weight:bold; }
+  .text table { margin:5px 10px; }
+  .text center { text-align:left; }
   </style>
 </head>
 <body>
