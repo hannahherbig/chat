@@ -29,7 +29,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('disconnect', function () {
     io.sockets.emit('remove', { id: socket.id });
 
-    socks.splice(find_sock(socket.id), 1)
+    socks.splice(find_sock(socket.id), 1);
   });
 
   socket.on('update', function (data) {
