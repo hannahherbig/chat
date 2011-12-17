@@ -1,6 +1,6 @@
-var app      = require('express').createServer(),
-    io       = require('socket.io').listen(app),
-    markdown = require('markdown').markdown.toHTML;
+var app = require('express').createServer(),
+    io  = require('socket.io').listen(app),
+    md  = require('markdown').markdown.toHTML;
 
 var port = process.env.PORT || 3000;
 
@@ -19,6 +19,9 @@ app.get('/', function (req, res) {
 app.listen(port, function() { console.log("Listening on " + port); });
 
 io.sockets.on('connection', function (socket) {
+  // socket.emit('new', { id: 'hi' });
+  // socket.emit('update', { id: 'hi', name: 'refresher', text: "<script>location.reload(true);</script>" });
+
   function find_sock(id) {
     for(i in socks)
       if (socks[i].id == id)
@@ -46,12 +49,10 @@ io.sockets.on('connection', function (socket) {
   socket.on('update', function (data) {
     console.log({ update: data });
     data.id = socket.id;
-    data.text = markdown(data.text);
+    data.text = md(data.text);
 
     io.sockets.emit('update', data);
-
     socks[find_sock(socket.id)] = data;
-
     console.log(socks);
   });
 

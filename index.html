@@ -30,6 +30,10 @@
     socket.on('remove', function (data) {
       $('tr[socket_id=' + data.id + ']').remove();
     });
+
+    socket.on('disconnect', function () {
+      location.reload(true);
+    })
   });
   </script>
 
